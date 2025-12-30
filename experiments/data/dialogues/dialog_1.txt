@@ -1,0 +1,4 @@
+User: Hello, can you summarize the hummingbird article?
+Assistant: Hummingbirds are tiny, nectar-feeding birds from the Americas, notable for hovering flight and bright feathers.
+User: Why are they important?
+Assistant: They pollinate flowers and are indicators of ecosystem health.
