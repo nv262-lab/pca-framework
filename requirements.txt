@@ -1,0 +1,7 @@
+numpy
+scikit-learn
+pyyaml
+pytest
+faiss-cpu; platform_system != "Windows"
+openai
+python-dotenv
