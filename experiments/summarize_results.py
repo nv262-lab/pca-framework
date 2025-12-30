@@ -1,62 +1,38 @@
 #!/usr/bin/env python3
-import sys
+"""
+Aggregate results JSON files in a directory and print a small summary.
+"""
+import argparse
 import json
+import os
 from pathlib import Path
-import csv
+from statistics import mean
 
-def summarize(out_base: Path, csv_path: Path):
-    full = out_base / "summary_full.csv"
-    if full.exists():
-        data = full.read_bytes()
-        csv_path.parent.mkdir(parents=True, exist_ok=True)
-        csv_path.write_bytes(data)
-        print(f"Copied aggregate summary {full} to {csv_path}")
-        return
+def summarize_dir(d):
+    d = Path(d)
+    files = sorted([p for p in d.iterdir() if p.name.startswith("results_") and p.suffix == ".json"])
+    summary = {"n_runs": len(files), "queries": {}, "files": [str(p) for p in files]}
+    for p in files:
+        j = json.load(open(p, "r", encoding="utf-8"))
+        for entry in j.get("results", []):
+            q = entry.get("query")
+            hits = entry.get("hits", [])
+            if q not in summary["queries"]:
+                summary["queries"][q] = {"n": 0, "avg_hits": []}
+            summary["queries"][q]["n"] += 1
+            summary["queries"][q]["avg_hits"].append(len(hits))
+    # convert lists to averages
+    for q, info in summary["queries"].items():
+        info["mean_hits"] = mean(info["avg_hits"]) if info["avg_hits"] else 0.0
+        del info["avg_hits"]
+    return summary
 
-    rows = []
-    for cfg_dir in sorted(out_base.iterdir()):
-        if not cfg_dir.is_dir():
-            continue
-        results_file = cfg_dir / "results.json"
-        if not results_file.exists():
-            continue
-        try:
-            data = json.loads(results_file.read_text())
-        except Exception:
-            continue
-        for entry in data:
-            q = entry.get("query", "")
-            metrics = entry.get("metrics", {})
-            poison_meta = entry.get("poison_meta", {})
-            row = {
-                "config": cfg_dir.name,
-                "query": q,
-                "verified": metrics.get("verified", 0),
-                "verification_fail": metrics.get("verification_fail", 0),
-                "attacks_reported": metrics.get("attacks_reported", 0),
-                "elapsed_ms": metrics.get("elapsed_ms", None),
-                "poison_strategy": poison_meta.get("strategy", ""),
-                "poison_count": poison_meta.get("count", None)
-            }
-            rows.append(row)
-
-    if not rows:
-        print("No results found to summarize in", out_base)
-        return
-
-    fieldnames = ["config","query","verified","verification_fail","attacks_reported","elapsed_ms","poison_strategy","poison_count"]
-    csv_path.parent.mkdir(parents=True, exist_ok=True)
-    with open(csv_path, "w", newline="") as fh:
-        writer = csv.DictWriter(fh, fieldnames=fieldnames)
-        writer.writeheader()
-        for r in rows:
-            writer.writerow(r)
-    print(f"Wrote summary CSV to {csv_path}")
+def main():
+    p = argparse.ArgumentParser()
+    p.add_argument("--dir", default="experiments/out")
+    args = p.parse_args()
+    s = summarize_dir(args.dir)
+    print(json.dumps(s, indent=2))
 
 if _name_ == "_main_":
-    if len(sys.argv) < 3:
-        print("Usage: python experiments/summarize_results.py <out_base_dir> <csv_output_path>")
-        sys.exit(1)
-    out_base = Path(sys.argv[1])
-    csv_out = Path(sys.argv[2])
-    summarize(out_base, csv_out)
+    main()
