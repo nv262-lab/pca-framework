@@ -1,7 +1,6 @@
 import os
 import tempfile
-from pca import poisoner
-
+from pca import poisoner, poison_corpus, iter_corpus
 
 def make_corpus(dirpath):
     docs = {
@@ -40,3 +39,11 @@ def test_poison_inserts_backdoor_and_counts():
         # iter_corpus should now include poisons
         total_count = sum(1 for _ in poisoner.iter_corpus(td))
         assert total_count == original_count + 2
+
+def test_poison_and_iter(tmp_path):
+    d = tmp_path / "corpus"
+    d.mkdir()
+    created = poison_corpus(str(d), "TRIGGER", n_poison=2)
+    assert len(created) == 2
+    files = list(iter_corpus(str(d)))
+    assert len(files) >= 2
