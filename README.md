@@ -31,7 +31,7 @@ Quick start (local)
 4. Summarize results:
    python experiments/summarize_results.py experiments/out experiments/out/summary.csv
 
-5. Optional LLM evaluation:
+5. LLM evaluation:
    - Set env var: OPENAI_API_KEY
    - Set HMAC key: export PCA_HMAC_KEY="mysecret"
    - In config YAML, set verification.llm_eval: true and optionally llm.model/llm.max_tokens
