@@ -1,0 +1,19 @@
+corpus:
+  per_provider: 20
+  seed: 1
+poison:
+  strategy: ["insert"]
+  rate: [0.0, 0.05]
+  seed: 1
+index:
+  use_faiss: false
+query:
+  queries:
+    - "suspicious object_put"
+    - "unauthorized iam_change"
+  topk: 5
+verification:
+  llm_eval: false
+llm:
+  model: "gpt-3.5-turbo"
+  max_tokens: 128
