@@ -1,6 +1,6 @@
 import os
 import tempfile
-from pca import poisoner, poison_corpus, iter_corpus
+from pca.posoner import poison_corpus, iter_corpus
 
 def make_corpus(dirpath):
     docs = {
