@@ -16,3 +16,10 @@ Credentials:
 - Azure: set AZURE_STORAGE_CONNECTION_STRING or provide account_url + AZURE_STORAGE_KEY
 
 See top-level README for more provider details.
+
+# OCI (Oracle Cloud Infrastructure)
+- Install Python SDK: pip install oci
+- Auth: use ~/.oci/config with profile, env-based config, or instance principal on OCI compute.
+- Example upload:
+  python experiments/multicloud/upload_to_cloud.py --provider oci --bucket MY_BUCKET --local experiments/out/llm_preds.jsonl --remote runs/demo/llm_preds.jsonl --oci-config-file ~/.oci/config --oci-profile DEFAULT
+- Note: OCI object storage requires a namespace; if not provided, the script will auto-discover it.
