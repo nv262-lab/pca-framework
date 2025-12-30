@@ -1,0 +1,18 @@
+# small demo sweep: builds TF-IDF index on experiments/data and runs a few queries
+output_dir: experiments/out
+corpus_dir: experiments/data
+queries:
+  - hummingbird
+  - solar
+  - reproducibility
+save_index: true
+index_filename: demo_idx.pkl
+poison:
+  enabled: false
+  trigger: TRIGGER
+  n_poison: 0
+cloud:
+  enabled: false
+  provider: s3
+  bucket: my-bucket
+  remote_key_prefix: demo/

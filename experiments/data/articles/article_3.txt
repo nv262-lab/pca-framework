@@ -1,0 +1,1 @@
+Machine learning systems benefit from curated datasets, careful evaluation, and provenance tracking. Reproducibility requires storing data versions, model config, and exact random seeds.

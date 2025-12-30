@@ -1,0 +1,7 @@
+{
+  "articles/article_1.txt": {"topic":"biology","lang":"en","source":"synthetic"},
+  "articles/article_2.txt": {"topic":"energy","lang":"en","source":"synthetic"},
+  "articles/article_3.txt": {"topic":"ml","lang":"en","source":"synthetic"},
+  "qna/qna_small.jsonl": {"type":"qa_pairs","lang":"en"},
+  "dialogues/dialog_1.txt": {"type":"dialogue","lang":"en"}
+}
