@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      PCA_HMAC_KEY: ${{ secrets.PCA_HMAC_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Run tests
+        run: pytest -q
+  demo-sweep:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Run demo sweep (no LLM)
+        env:
+          PCA_HMAC_KEY: ${{ secrets.PCA_HMAC_KEY }}
+        run: |
+          python experiments/run_sweep.py experiments/configs/demo_small.yaml --out experiments/out_ci --hmac-key "$PCA_HMAC_KEY"
+      - name: Upload results
+        uses: actions/upload-artifact@v4
+        with:
+          name: demo-sweep-out
+          path: experiments/out_ci
