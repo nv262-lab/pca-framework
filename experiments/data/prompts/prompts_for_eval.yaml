@@ -1,0 +1,11 @@
+- id: p1
+  text: "Summarize article_1 in one sentence."
+  target_file: "articles/article_1.txt"
+
+- id: p2
+  text: "Give a short pro/con list for solar power based on article_2."
+  target_file: "articles/article_2.txt"
+
+- id: p3
+  text: "List three best practices for ML reproducibility from article_3."
+  target_file: "articles/article_3.txt"
